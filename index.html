@@ -611,7 +611,7 @@ function selectAnswer(choiceIndex) {
 function nextQuestion() {
   quizIndex++;
   if (quizIndex >= quizQuestions.length) finishQuiz();
-  else showQuestion();
+  else { showQuestion(); window.scrollTo({ top: 0, behavior: 'instant' }); }
 }
 
 function finishQuiz() {
