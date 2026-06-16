@@ -84,15 +84,15 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','H
 .modal-close{display:block;width:100%;padding:14px;background:none;border:2px solid var(--border);border-radius:var(--radius);font-size:14px;color:var(--text-light);cursor:pointer;margin-top:12px}
 
 /* ===== クイズ ===== */
-#quiz-screen{background:var(--bg);height:100vh;min-height:unset;overflow:hidden}
-.quiz-header{background:var(--primary);color:#fff;padding:16px 20px 0;position:sticky;top:0;z-index:10}
+#quiz-screen{background:var(--bg);height:100dvh;min-height:unset;display:flex;flex-direction:column}
+.quiz-header{background:var(--primary);color:#fff;padding:16px 20px 0;flex-shrink:0;z-index:10}
 .quiz-header-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .back-btn{background:rgba(255,255,255,.2);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;-webkit-tap-highlight-color:transparent}
 .quiz-subject-name{font-size:12px;opacity:.9;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .quiz-counter{font-size:13px;font-weight:600;white-space:nowrap}
 .quiz-progress-bar{height:4px;background:rgba(255,255,255,.2);margin:0 -20px}
 .quiz-progress-fill{height:100%;background:#fff;transition:width .3s}
-.quiz-content{padding:16px;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:100px}
+.quiz-content{padding:16px;flex:1;overflow-y:scroll;overscroll-behavior:contain;padding-bottom:100px}
 .q-type-badge{display:inline-block;font-size:11px;padding:3px 10px;border-radius:20px;background:var(--primary-light);color:var(--primary);font-weight:600;margin-bottom:10px}
 .q-text{font-size:15px;line-height:1.7;color:var(--text);margin-bottom:20px;font-weight:500}
 .choices-list{list-style:none}
@@ -152,7 +152,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','H
     <div class="login-logo">
       <span class="icon">📋</span>
       <h1>法令等遵守責任者<br>試験対策サイト</h1>
-      <p>日本郵便 信越支社 Ver.2.0.6</p>
+      <p>日本郵便 信越支社 Ver.2.0.7</p>
     </div>
     <div class="form-group">
       <label class="form-label" for="pw-input">パスワード</label>
@@ -613,16 +613,12 @@ function nextQuestion() {
   if (quizIndex >= quizQuestions.length) finishQuiz();
   else {
     showQuestion();
-    setTimeout(() => {
-      window.scrollTo(0, 0);
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-      const qs = document.getElementById('quiz-screen');
-      if (qs) qs.scrollTop = 0;
-      const qc = document.querySelector('.quiz-content');
-      if (qc) qc.scrollTop = 0;
-      document.querySelector('.quiz-header')?.scrollIntoView({ behavior: 'instant', block: 'start' });
-    }, 50);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const qc = document.querySelector('.quiz-content');
+        if (qc) qc.scrollTop = 0;
+      });
+    });
   }
 }
 
