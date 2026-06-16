@@ -175,8 +175,9 @@ def parse_diff_answers(docx_path):
 def main():
     subjects = []
 
-    # 1. 通常問題（001〜048）
-    files = sorted(f for f in os.listdir(SOURCE_DIR) if f.endswith('.docx'))
+    # 1. 通常問題（001〜048）※Ver.2.0.0ファイルは除外
+    files = sorted(f for f in os.listdir(SOURCE_DIR)
+                   if f.endswith('.docx') and '_Ver.' not in f)
     q_files = [f for f in files if int(f[:3]) % 2 == 1]
 
     for q_file in q_files:
