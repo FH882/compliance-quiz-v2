@@ -152,7 +152,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','H
     <div class="login-logo">
       <span class="icon">📋</span>
       <h1>法令等遵守責任者<br>試験対策サイト</h1>
-      <p>日本郵便 信越支社 Ver.2.0.5</p>
+      <p>日本郵便 信越支社 Ver.2.0.6</p>
     </div>
     <div class="form-group">
       <label class="form-label" for="pw-input">パスワード</label>
@@ -613,11 +613,16 @@ function nextQuestion() {
   if (quizIndex >= quizQuestions.length) finishQuiz();
   else {
     showQuestion();
-    const qc = document.querySelector('.quiz-content');
-    if (qc) qc.scrollTop = 0;
     setTimeout(() => {
-      document.querySelector('.q-type-badge')?.scrollIntoView({ behavior: 'instant', block: 'start' });
-    }, 0);
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      const qs = document.getElementById('quiz-screen');
+      if (qs) qs.scrollTop = 0;
+      const qc = document.querySelector('.quiz-content');
+      if (qc) qc.scrollTop = 0;
+      document.querySelector('.quiz-header')?.scrollIntoView({ behavior: 'instant', block: 'start' });
+    }, 50);
   }
 }
 
