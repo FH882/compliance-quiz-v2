@@ -152,7 +152,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','H
     <div class="login-logo">
       <span class="icon">📋</span>
       <h1>法令等遵守責任者<br>試験対策サイト</h1>
-      <p>日本郵便 信越支社 Ver.2.1.0</p>
+      <p>日本郵便 信越支社 Ver.2.1.1</p>
     </div>
     <div class="form-group">
       <label class="form-label" for="pw-input">パスワード</label>
@@ -332,14 +332,13 @@ function resumeSession(session) {
 }
 
 function shuffleChoices(q) {
-  const order = [0, 1, 2, 3];
-  for (let i = 3; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [order[i], order[j]] = [order[j], order[i]];
-  }
+  // 選択肢はデータ作成時に既にランダム化済み。
+  // 解説文は固定の選択肢番号（JSON順の「正解②」「選択肢1が誤り」等）を参照しているため、
+  // 表示時に再シャッフルすると解説の番号と表示順がズレてしまう。
+  // よってJSON順のまま表示し、解説との整合を保つ。
   return {
-    choices: order.map(i => q.choices[i]),
-    correctPos: order.indexOf(q.answer - 1)
+    choices: q.choices.slice(),
+    correctPos: q.answer - 1
   };
 }
 
