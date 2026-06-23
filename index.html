@@ -62,7 +62,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','H
 .badge-todo{background:#eee;color:var(--text-light)}
 .badge-progress{background:#fff3cd;color:#856404}
 .badge-done{background:#d1f0e0;color:#155724}
-.badge-paused{background:#fff8e1;color:#b9770e;border:1px solid #f39c12;margin-right:6px;animation:pausePulse 1.6s ease-in-out infinite}
+.badge-paused{background:#fff8e1;color:#b9770e;border:1px solid #f39c12;animation:pausePulse 1.6s ease-in-out infinite}
 @keyframes pausePulse{0%,100%{opacity:1}50%{opacity:.55}}
 .subject-progress-bar{height:5px;background:#eee;border-radius:3px;overflow:hidden;margin-bottom:6px}
 .subject-progress-fill{height:100%;background:var(--primary);border-radius:3px;transition:width .3s}
@@ -154,7 +154,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','H
     <div class="login-logo">
       <span class="icon">📋</span>
       <h1>法令等遵守責任者<br>試験対策サイト</h1>
-      <p>日本郵便 信越支社 Ver.2.1.4</p>
+      <p>日本郵便 信越支社 Ver.2.1.5</p>
     </div>
     <div class="form-group">
       <label class="form-label" for="pw-input">パスワード</label>
@@ -409,26 +409,26 @@ function renderHome() {
       const pct = total > 0 ? Math.round(ans / total * 100) : 0;
       const acc = ans > 0 ? Math.round(cor / ans * 100) : 0;
 
-      let badge = '未着手', bClass = 'badge-todo';
-      if (ans > 0 && ans < total) { badge = `${pct}%進行中`; bClass = 'badge-progress'; }
-      else if (ans >= total)      { badge = `完了 ${acc}%`;  bClass = 'badge-done'; }
-
-      const pausedBadge = (s.id === pausedId)
-        ? '<span class="subject-badge badge-paused">⏸ 中断中</span>' : '';
+      // 1科目につき1つのステータスバッジに統一（優先順位：中断中＞完了＞進行中＞未学習）
+      let badge, bClass;
+      if (s.id === pausedId)           { badge = '⏸ 中断中';     bClass = 'badge-paused'; }
+      else if (total > 0 && ans >= total) { badge = `完了 ${acc}%`; bClass = 'badge-done'; }
+      else if (ans > 0)                { badge = `進行中 ${pct}%`; bClass = 'badge-progress'; }
+      else                             { badge = '未学習';        bClass = 'badge-todo'; }
 
       const card = document.createElement('div');
       card.className = 'subject-card';
       card.innerHTML = `
         <div class="subject-card-header">
           <div class="subject-name">${s.name}</div>
-          <span style="display:flex;align-items:center;flex-shrink:0">${pausedBadge}<span class="subject-badge ${bClass}">${badge}</span></span>
+          <span class="subject-badge ${bClass}">${badge}</span>
         </div>
         <div class="subject-progress-bar">
           <div class="subject-progress-fill ${pct >= 80 ? 'high' : ''}" style="width:${pct}%"></div>
         </div>
         <div class="subject-meta">
           <span>${ans}/${total}問 回答済み</span>
-          <span>${ans > 0 ? `正答率 ${acc}%` : '未挑戦'}</span>
+          <span>${ans > 0 ? `正答率 ${acc}%` : ''}</span>
         </div>`;
       card.addEventListener('click', () => openSubjectModal(s.id));
       container.appendChild(card);
