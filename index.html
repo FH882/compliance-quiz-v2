@@ -71,8 +71,8 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','H
 .home-footer{padding:16px;background:var(--card);border-top:1px solid var(--border);display:flex;gap:8px}
 
 /* ===== テキスト選択モーダル ===== */
-#subject-modal{position:fixed;inset:0;z-index:500;display:none}
-#subject-modal.open{display:block}
+#subject-modal,#quiz-exit-modal{position:fixed;inset:0;z-index:500;display:none}
+#subject-modal.open,#quiz-exit-modal.open{display:block}
 .modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.5)}
 .modal-sheet{position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;padding:24px 20px 40px;max-height:85vh;overflow-y:auto}
 .modal-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px}
@@ -91,8 +91,6 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','H
 .quiz-header-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .back-btn{background:rgba(255,255,255,.2);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;-webkit-tap-highlight-color:transparent}
 .quiz-subject-name{font-size:12px;opacity:.9;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.save-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.45);color:#fff;font-size:12px;padding:6px 12px;border-radius:16px;cursor:pointer;white-space:nowrap;flex-shrink:0;-webkit-tap-highlight-color:transparent}
-.save-btn:active{opacity:.8}
 .quiz-counter{font-size:13px;font-weight:600;white-space:nowrap}
 .quiz-progress-bar{height:4px;background:rgba(255,255,255,.2);margin:0 -20px}
 .quiz-progress-fill{height:100%;background:#fff;transition:width .3s}
@@ -156,7 +154,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','H
     <div class="login-logo">
       <span class="icon">📋</span>
       <h1>法令等遵守責任者<br>試験対策サイト</h1>
-      <p>日本郵便 信越支社 Ver.2.1.9</p>
+      <p>日本郵便 信越支社 Ver.2.2.0</p>
     </div>
     <div class="form-group">
       <label class="form-label" for="pw-input">パスワード</label>
@@ -206,13 +204,27 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','H
   </div>
 </div>
 
+<!-- 中断メニュー（←ボタン） -->
+<div id="quiz-exit-modal">
+  <div class="modal-overlay" id="quiz-exit-overlay"></div>
+  <div class="modal-sheet">
+    <div class="modal-title">この問題を中断しますか？</div>
+    <div class="modal-subtitle">操作を選んでください</div>
+    <div class="modal-options">
+      <button class="modal-option" id="exit-save-btn"><span class="modal-option-label">🔖 一時保存して戻る</span><span class="modal-option-meta">あとで続きから再開できます</span></button>
+      <button class="modal-option" id="exit-discard-btn"><span class="modal-option-label">↩ 保存せずに問題選択画面に戻る</span><span class="modal-option-meta">この回の進捗は破棄されます</span></button>
+    </div>
+    <div class="modal-divider"></div>
+    <button class="modal-close" id="exit-cancel-btn">キャンセル（問題を続ける）</button>
+  </div>
+</div>
+
 <!-- クイズ -->
 <div id="quiz-screen" class="screen">
   <div class="quiz-header">
     <div class="quiz-header-top">
-      <button class="back-btn" id="quiz-back-btn" title="保存せずに問題選択画面に戻る" aria-label="保存せずに問題選択画面に戻る">←</button>
+      <button class="back-btn" id="quiz-back-btn" title="中断メニュー（一時保存／保存せず戻る）" aria-label="中断メニューを開く">←</button>
       <span class="quiz-subject-name" id="quiz-subject-name"></span>
-      <button class="save-btn" id="quiz-save-btn" title="一時保存して問題選択画面に戻る（あとで続きから再開できます）">一時保存</button>
       <span class="quiz-counter" id="quiz-counter">1/50</span>
     </div>
     <div class="quiz-progress-bar">
@@ -701,16 +713,16 @@ function setupEvents() {
   $('modal-overlay').addEventListener('click', closeModal);
   $('modal-close-btn').addEventListener('click', closeModal);
 
-  // 保存せずに問題選択画面（ホーム）へ戻る。中断セッションは破棄する。
-  $('quiz-back-btn').addEventListener('click', () => {
-    clearSession();
-    showHomeScreen();
+  // 「←」で中断メニューを表示（一時保存／保存せず戻る／キャンセル）
+  const closeExit = () => $('quiz-exit-modal').classList.remove('open');
+  $('quiz-back-btn').addEventListener('click', () => $('quiz-exit-modal').classList.add('open'));
+  $('quiz-exit-overlay').addEventListener('click', closeExit);
+  $('exit-cancel-btn').addEventListener('click', closeExit);   // 問題の続きを実施
+  $('exit-save-btn').addEventListener('click', () => {          // 一時保存して戻る
+    closeExit(); saveSession(); showHomeScreen();
   });
-
-  // 一時保存して問題選択画面へ戻る。あとで「続きから再開」できる。
-  $('quiz-save-btn').addEventListener('click', () => {
-    saveSession();
-    showHomeScreen();
+  $('exit-discard-btn').addEventListener('click', () => {       // 保存せず戻る
+    closeExit(); clearSession(); showHomeScreen();
   });
 
   $('next-btn').addEventListener('click', nextQuestion);
