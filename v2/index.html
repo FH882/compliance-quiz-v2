@@ -154,7 +154,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','H
     <div class="login-logo">
       <span class="icon">📋</span>
       <h1>法令等遵守責任者<br>試験対策サイト</h1>
-      <p>日本郵便 信越支社 Ver.3.0.1</p>
+      <p>日本郵便 信越支社 Ver.2.1.5（旧版・アーカイブ）</p>
     </div>
     <div class="form-group">
       <label class="form-label" for="pw-input">パスワード</label>
@@ -162,7 +162,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','H
     </div>
     <div id="login-error" class="login-error">パスワードが正しくありません</div>
     <button class="btn btn-primary" id="login-btn">ログイン</button>
-    <p style="text-align:center;margin-top:14px;font-size:12px"><a href="v2/" style="color:#9aa">旧版（Ver.2）を開く</a></p>
+    <p style="text-align:center;margin-top:14px;font-size:12px"><a href="../" style="color:#9aa">最新版（Ver.3）を開く</a></p>
   </div>
 </div>
 
@@ -283,11 +283,11 @@ function closeModal() {
 }
 
 function loadProg() {
-  try { return JSON.parse(localStorage.getItem('cp2_prog') || '{}'); }
+  try { return JSON.parse(localStorage.getItem('cp2v2_prog') || '{}'); }
   catch { return {}; }
 }
 function saveProg(p) {
-  localStorage.setItem('cp2_prog', JSON.stringify(p));
+  localStorage.setItem('cp2v2_prog', JSON.stringify(p));
 }
 function getSubjectProg(id) {
   const p = loadProg();
@@ -313,11 +313,11 @@ function saveSession() {
     results: quizResults,
     ts: Date.now()
   };
-  localStorage.setItem('cp2_session', JSON.stringify(session));
+  localStorage.setItem('cp2v2_session', JSON.stringify(session));
 }
-function clearSession() { localStorage.removeItem('cp2_session'); }
+function clearSession() { localStorage.removeItem('cp2v2_session'); }
 function loadSession() {
-  try { return JSON.parse(localStorage.getItem('cp2_session')); }
+  try { return JSON.parse(localStorage.getItem('cp2v2_session')); }
   catch { return null; }
 }
 function resumeSession(session) {
@@ -345,10 +345,10 @@ function shuffleChoices(q) {
   };
 }
 
-function isLoggedIn() { return sessionStorage.getItem('cp2_auth') === '1'; }
+function isLoggedIn() { return sessionStorage.getItem('cp2v2_auth') === '1'; }
 function doLogin(pw) {
   if (pw === PASSWORD) {
-    sessionStorage.setItem('cp2_auth', '1');
+    sessionStorage.setItem('cp2v2_auth', '1');
     $('login-error').classList.remove('show');
     showHomeScreen();
   } else {
@@ -357,7 +357,7 @@ function doLogin(pw) {
     $('pw-input').focus();
   }
 }
-function doLogout() { sessionStorage.removeItem('cp2_auth'); showScreen('login-screen'); }
+function doLogout() { sessionStorage.removeItem('cp2v2_auth'); showScreen('login-screen'); }
 
 function getGroup(subject) {
   if (subject.id.startsWith('D')) return '🎯 難易度別テスト';
