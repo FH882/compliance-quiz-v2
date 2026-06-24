@@ -154,7 +154,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','H
     <div class="login-logo">
       <span class="icon">📋</span>
       <h1>法令等遵守責任者<br>試験対策サイト</h1>
-      <p>日本郵便 信越支社 Ver.2.1.7</p>
+      <p>日本郵便 信越支社 Ver.2.1.8</p>
     </div>
     <div class="form-group">
       <label class="form-label" for="pw-input">パスワード</label>
@@ -208,7 +208,7 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','H
 <div id="quiz-screen" class="screen">
   <div class="quiz-header">
     <div class="quiz-header-top">
-      <button class="back-btn" id="quiz-back-btn">←</button>
+      <button class="back-btn" id="quiz-back-btn" title="保存せずに問題選択画面に戻る" aria-label="保存せずに問題選択画面に戻る">←</button>
       <span class="quiz-subject-name" id="quiz-subject-name"></span>
       <span class="quiz-counter" id="quiz-counter">1/50</span>
     </div>
@@ -698,10 +698,10 @@ function setupEvents() {
   $('modal-overlay').addEventListener('click', closeModal);
   $('modal-close-btn').addEventListener('click', closeModal);
 
+  // 保存せずに問題選択画面（ホーム）へ戻る。中断セッションは破棄する。
   $('quiz-back-btn').addEventListener('click', () => {
-    if (confirm('中断しますか？\n（ここまでの進捗は保存され、あとで続きから再開できます）')) {
-      showHomeScreen();
-    }
+    clearSession();
+    showHomeScreen();
   });
 
   $('next-btn').addEventListener('click', nextQuestion);
